@@ -1,4 +1,23 @@
-#Sümerya Yüce
+# Sümerya Yüce
+
+# Bu proje, deterministik tek şeritli bir Turing Makinesi simülatörüdür. Hocamızın rubrikte istediği kullanım örneğini aşağıya bırakıyorum.
+# SingleTapeTM sınıfını şu şekilde kullanabilirsiniz:
+from turinglab.tm_engine import SingleTapeTM
+
+# Makineyi YAML dosyasından yükle
+tm = SingleTapeTM.from_yaml("machines/binary_increment.yaml")
+
+# "1011" girdisiyle çalıştır
+result = tm.run(input_string="1011", verbose=True)
+
+# Sonucu ekrana yazdır
+print(f"Sonuç Şeridi: {result.final_tape}")
+print(f"Toplam Adım: {result.steps}")
+
+# Motorun doğruluğunu kontrol etmek için hazırladığım testleri şu komutla çalıştırabilirsiniz:
+python -m pytest
+
+# İsteğe bağlı bırakılan tasarım kararlarından olan şerit yapısını, list yerine dict (sözlük) kullanarak tasarladım. Bunun sebebi, kafa 0'ın soluna (negatif indekse) taştığınde Python listelerinin hata vermesi veya yanlış yerden okuması. Dict kullanarak bu sorunu çözdüm. El kitabındaki "Karar size ait" maddesi sebebiyle; makine kafa sola taştığında (head < 0) hata vermez, o yönde de sonsuz bir şerit varmış gibi çalışmaya devam eder. Ayrıca boşluk (blank) sembolü olarak karışıklık yaşanmaması için “B” karakterini seçtim.
 
 TEORİK BİLGİSAYAR BİLİMLERİ · HESAPLAMA KURAMI · FİNAL ÖDEVİ
 TURINGLAB
