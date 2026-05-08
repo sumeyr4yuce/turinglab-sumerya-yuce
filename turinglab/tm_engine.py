@@ -11,6 +11,13 @@ import yaml
 
 @dataclass(frozen=True)
 class Configuration:
+     """Bir adımdaki anlık makine konfigürasyonu.
+    
+    Attributes:
+        state: O andaki durum adı.
+        tape: Şeridin görüntüsü (string).
+        head_position: Kafanın indeksi.
+    """
 
     state: str
     tape: str
@@ -30,7 +37,8 @@ class RunResult:
 
 @dataclass(frozen=True)
 class Transition:
-
+    """Tek bir δ geçiş kuralı."""
+    
     next_state: str
     write: str
     move: str  #L veya R
@@ -62,6 +70,7 @@ class Tape:
             self._cells[position] = symbol
 
     def to_string(self, head: int, padding: int = 1) -> str:
+        """Şeridi okunabilir string'e çevirir."""
         
         if not self._cells and head == 0:
             return self.blank
