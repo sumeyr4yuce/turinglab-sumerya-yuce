@@ -105,8 +105,11 @@ class SingleTapeTM:
     @classmethod
     def from_yaml(cls, path: str | Path) -> "SingleTapeTM":
         """El kitabındaki YAML formatına uygun yükleme yapar."""
-        with open(path, "r", encoding="utf-8") as f:
-            data = yaml.safe_load(f)
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                data = yaml.safe_load(f)
+        except yaml.YAMLError as exc:
+            raise ValueError(f"YAML ayrıştırma hatası ({path}): {exc}") from exc
         
         #Geçiş kurallarını (state, read) transition şeklinde sözlüğe çeviriyoruz.
         trans_map = {}
