@@ -70,7 +70,8 @@ def test_timeout_status(tmp_path: Path) -> None:
     loop_def = {
         "states": ["q0"], "input_alphabet": ["0"], "tape_alphabet": ["0", "B"],
         "blank": "B", "start_state": "q0", "accept_states": [], "transitions": [
-            {"state": "q0", "read": "0", "next": "q0", "write": "0", "move": "R"}
+            {"state": "q0", "read": "0", "next": "q0", "write": "0", "move": "R"},
+            {"state": "q0", "read": "B", "next": "q0", "write": "B", "move": "R"}
         ]
     }
     loop_yaml.write_text(yaml.dump(loop_def))
