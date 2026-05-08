@@ -119,6 +119,15 @@ class SingleTapeTM:
                 data = yaml.safe_load(f)
         except yaml.YAMLError as exc:
             raise ValueError(f"YAML ayrıştırma hatası ({path}): {exc}") from exc
+
+         #el kitabındaki zorunlu alanlar tam mı? kontrol
+         required_keys = [
+            "states", "input_alphabet", "tape_alphabet", 
+            "blank", "start_state", "accept_states", "transitions"
+        ]
+        missing = [k for k in required_keys if k not in data]
+        if missing:
+            raise ValueError(f"YAML dosyasında şu zorunlu alanlar eksik: {missing}")
         
         #Geçiş kurallarını (state, read) transition şeklinde sözlüğe çeviriyoruz.
         trans_map = {}
