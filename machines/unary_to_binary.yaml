@@ -1,0 +1,50 @@
+name: "unary_to_binary"
+description: "Unary gösterimi ikili gösterime çevirir. Örnek: 111 -> 11"
+
+states:
+  - q_start
+  - q_go_left
+  - q_find
+  - q_to_left_delim
+  - q_inc
+  - q_return_find
+  - q_cleanup_left
+  - q_accept
+
+input_alphabet: ["1"]
+tape_alphabet: ["0", "1", "B", "X"]
+blank: "B"
+start_state: q_start
+accept_states: [q_accept]
+reject_states: []
+
+transitions:
+  # Sağ uç işaretçisini koy, sonra sol uca dönüp ikinci X işaretçisini koy.
+  - {state: q_start, read: "1", next: q_start, write: "1", move: R}
+  - {state: q_start, read: "B", next: q_go_left, write: "X", move: L}
+  - {state: q_go_left, read: "1", next: q_go_left, write: "1", move: L}
+  - {state: q_go_left, read: "B", next: q_find, write: "X", move: R}
+
+  # Sol ve sağ X arasındaki işlenmemiş 1'leri tek tek tüket.
+  - {state: q_find, read: "B", next: q_find, write: "B", move: R}
+  - {state: q_find, read: "1", next: q_to_left_delim, write: "B", move: L}
+  - {state: q_find, read: "X", next: q_cleanup_left, write: "B", move: L}
+
+  # Sol X'e dön ve onun solundaki ikili sayacı bir artır.
+  - {state: q_to_left_delim, read: "B", next: q_to_left_delim, write: "B", move: L}
+  - {state: q_to_left_delim, read: "1", next: q_to_left_delim, write: "1", move: L}
+  - {state: q_to_left_delim, read: "X", next: q_inc, write: "X", move: L}
+
+  # Sayaç normal ikili biçimde tutulur; en düşük bit sol X'in hemen solundadır.
+  - {state: q_inc, read: "B", next: q_return_find, write: "1", move: R}
+  - {state: q_inc, read: "0", next: q_return_find, write: "1", move: R}
+  - {state: q_inc, read: "1", next: q_inc, write: "0", move: L}
+
+  - {state: q_return_find, read: "0", next: q_return_find, write: "0", move: R}
+  - {state: q_return_find, read: "1", next: q_return_find, write: "1", move: R}
+  - {state: q_return_find, read: "B", next: q_return_find, write: "B", move: R}
+  - {state: q_return_find, read: "X", next: q_find, write: "X", move: R}
+
+  # Sağ X silindi; sol X'e kadar temizle, sol X'i de sil ve sayaçla kabul et.
+  - {state: q_cleanup_left, read: "B", next: q_cleanup_left, write: "B", move: L}
+  - {state: q_cleanup_left, read: "X", next: q_accept, write: "B", move: L}

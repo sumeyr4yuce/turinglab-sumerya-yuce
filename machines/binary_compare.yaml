@@ -1,0 +1,126 @@
+name: "binary_compare"
+description: "w1#w2 biçimindeki iki ikili sayıyı karşılaştırır; w1 > w2 ise kabul eder."
+
+states:
+  - q_len_start
+  - q_seek_hash
+  - q_mark_second
+  - q_return_len
+  - q_check_second
+  - q_restore_left
+  - q_restore
+  - q_to_cmp_start
+  - q_cmp_start
+  - q_seek_hash_0
+  - q_seek_hash_1
+  - q_cmp_second_0
+  - q_cmp_second_1
+  - q_cmp_return
+  - q_accept
+  - q_reject
+
+input_alphabet: ["0", "1", "#"]
+tape_alphabet: ["0", "1", "#", "B", "A", "C", "D", "E"]
+blank: "B"
+start_state: q_len_start
+accept_states: [q_accept]
+reject_states: [q_reject]
+
+transitions:
+  # Uzunluk karşılaştırması: soldaki her bit için sağ tarafta bir bit işaretlenir.
+  - {state: q_len_start, read: "A", next: q_len_start, write: "A", move: R}
+  - {state: q_len_start, read: "C", next: q_len_start, write: "C", move: R}
+  - {state: q_len_start, read: "0", next: q_seek_hash, write: "A", move: R}
+  - {state: q_len_start, read: "1", next: q_seek_hash, write: "C", move: R}
+  - {state: q_len_start, read: "#", next: q_check_second, write: "#", move: R}
+  - {state: q_len_start, read: "B", next: q_reject, write: "B", move: R}
+
+  - {state: q_seek_hash, read: "0", next: q_seek_hash, write: "0", move: R}
+  - {state: q_seek_hash, read: "1", next: q_seek_hash, write: "1", move: R}
+  - {state: q_seek_hash, read: "A", next: q_seek_hash, write: "A", move: R}
+  - {state: q_seek_hash, read: "C", next: q_seek_hash, write: "C", move: R}
+  - {state: q_seek_hash, read: "#", next: q_mark_second, write: "#", move: R}
+
+  - {state: q_mark_second, read: "D", next: q_mark_second, write: "D", move: R}
+  - {state: q_mark_second, read: "E", next: q_mark_second, write: "E", move: R}
+  - {state: q_mark_second, read: "0", next: q_return_len, write: "D", move: L}
+  - {state: q_mark_second, read: "1", next: q_return_len, write: "E", move: L}
+  - {state: q_mark_second, read: "B", next: q_accept, write: "B", move: R}
+
+  - {state: q_return_len, read: "0", next: q_return_len, write: "0", move: L}
+  - {state: q_return_len, read: "1", next: q_return_len, write: "1", move: L}
+  - {state: q_return_len, read: "#", next: q_return_len, write: "#", move: L}
+  - {state: q_return_len, read: "A", next: q_return_len, write: "A", move: L}
+  - {state: q_return_len, read: "C", next: q_return_len, write: "C", move: L}
+  - {state: q_return_len, read: "D", next: q_return_len, write: "D", move: L}
+  - {state: q_return_len, read: "E", next: q_return_len, write: "E", move: L}
+  - {state: q_return_len, read: "B", next: q_len_start, write: "B", move: R}
+
+  # Sol taraf bittiyse sağda işaretlenmemiş bit kalıp kalmadığına bak.
+  - {state: q_check_second, read: "D", next: q_check_second, write: "D", move: R}
+  - {state: q_check_second, read: "E", next: q_check_second, write: "E", move: R}
+  - {state: q_check_second, read: "0", next: q_reject, write: "0", move: R}
+  - {state: q_check_second, read: "1", next: q_reject, write: "1", move: R}
+  - {state: q_check_second, read: "B", next: q_restore_left, write: "B", move: L}
+
+  # Uzunluklar eşitse A/C/D/E işaretlerini geri al.
+  - {state: q_restore_left, read: "0", next: q_restore_left, write: "0", move: L}
+  - {state: q_restore_left, read: "1", next: q_restore_left, write: "1", move: L}
+  - {state: q_restore_left, read: "#", next: q_restore_left, write: "#", move: L}
+  - {state: q_restore_left, read: "A", next: q_restore_left, write: "A", move: L}
+  - {state: q_restore_left, read: "C", next: q_restore_left, write: "C", move: L}
+  - {state: q_restore_left, read: "D", next: q_restore_left, write: "D", move: L}
+  - {state: q_restore_left, read: "E", next: q_restore_left, write: "E", move: L}
+  - {state: q_restore_left, read: "B", next: q_restore, write: "B", move: R}
+
+  - {state: q_restore, read: "A", next: q_restore, write: "0", move: R}
+  - {state: q_restore, read: "C", next: q_restore, write: "1", move: R}
+  - {state: q_restore, read: "D", next: q_restore, write: "0", move: R}
+  - {state: q_restore, read: "E", next: q_restore, write: "1", move: R}
+  - {state: q_restore, read: "0", next: q_restore, write: "0", move: R}
+  - {state: q_restore, read: "1", next: q_restore, write: "1", move: R}
+  - {state: q_restore, read: "#", next: q_restore, write: "#", move: R}
+  - {state: q_restore, read: "B", next: q_to_cmp_start, write: "B", move: L}
+
+  - {state: q_to_cmp_start, read: "0", next: q_to_cmp_start, write: "0", move: L}
+  - {state: q_to_cmp_start, read: "1", next: q_to_cmp_start, write: "1", move: L}
+  - {state: q_to_cmp_start, read: "#", next: q_to_cmp_start, write: "#", move: L}
+  - {state: q_to_cmp_start, read: "B", next: q_cmp_start, write: "B", move: R}
+
+  # Eşit uzunlukta soldan sağa ilk farklı biti karşılaştır.
+  - {state: q_cmp_start, read: "A", next: q_cmp_start, write: "A", move: R}
+  - {state: q_cmp_start, read: "C", next: q_cmp_start, write: "C", move: R}
+  - {state: q_cmp_start, read: "0", next: q_seek_hash_0, write: "A", move: R}
+  - {state: q_cmp_start, read: "1", next: q_seek_hash_1, write: "C", move: R}
+  - {state: q_cmp_start, read: "#", next: q_reject, write: "#", move: R}
+
+  - {state: q_seek_hash_0, read: "0", next: q_seek_hash_0, write: "0", move: R}
+  - {state: q_seek_hash_0, read: "1", next: q_seek_hash_0, write: "1", move: R}
+  - {state: q_seek_hash_0, read: "A", next: q_seek_hash_0, write: "A", move: R}
+  - {state: q_seek_hash_0, read: "C", next: q_seek_hash_0, write: "C", move: R}
+  - {state: q_seek_hash_0, read: "#", next: q_cmp_second_0, write: "#", move: R}
+
+  - {state: q_seek_hash_1, read: "0", next: q_seek_hash_1, write: "0", move: R}
+  - {state: q_seek_hash_1, read: "1", next: q_seek_hash_1, write: "1", move: R}
+  - {state: q_seek_hash_1, read: "A", next: q_seek_hash_1, write: "A", move: R}
+  - {state: q_seek_hash_1, read: "C", next: q_seek_hash_1, write: "C", move: R}
+  - {state: q_seek_hash_1, read: "#", next: q_cmp_second_1, write: "#", move: R}
+
+  - {state: q_cmp_second_0, read: "D", next: q_cmp_second_0, write: "D", move: R}
+  - {state: q_cmp_second_0, read: "E", next: q_cmp_second_0, write: "E", move: R}
+  - {state: q_cmp_second_0, read: "0", next: q_cmp_return, write: "D", move: L}
+  - {state: q_cmp_second_0, read: "1", next: q_reject, write: "1", move: R}
+
+  - {state: q_cmp_second_1, read: "D", next: q_cmp_second_1, write: "D", move: R}
+  - {state: q_cmp_second_1, read: "E", next: q_cmp_second_1, write: "E", move: R}
+  - {state: q_cmp_second_1, read: "0", next: q_accept, write: "0", move: R}
+  - {state: q_cmp_second_1, read: "1", next: q_cmp_return, write: "E", move: L}
+
+  - {state: q_cmp_return, read: "0", next: q_cmp_return, write: "0", move: L}
+  - {state: q_cmp_return, read: "1", next: q_cmp_return, write: "1", move: L}
+  - {state: q_cmp_return, read: "#", next: q_cmp_return, write: "#", move: L}
+  - {state: q_cmp_return, read: "A", next: q_cmp_return, write: "A", move: L}
+  - {state: q_cmp_return, read: "C", next: q_cmp_return, write: "C", move: L}
+  - {state: q_cmp_return, read: "D", next: q_cmp_return, write: "D", move: L}
+  - {state: q_cmp_return, read: "E", next: q_cmp_return, write: "E", move: L}
+  - {state: q_cmp_return, read: "B", next: q_cmp_start, write: "B", move: R}
