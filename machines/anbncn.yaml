@@ -1,0 +1,54 @@
+name: "anbncn"
+description: "3 şeritli TM: L = {a^n b^n c^n | n >= 0} dilini tanır."
+
+num_tapes: 3
+states:
+  - q_start
+  - q_a
+  - q_b
+  - q_to_t2_start
+  - q_to_t2_back
+  - q_to_t3_start
+  - q_to_t3_back
+  - q_c
+  - q_accept
+
+input_alphabet: ["a", "b", "c"]
+tape_alphabet: ["a", "b", "c", "1", "B"]
+blank: "B"
+start_state: q_start
+accept_states: [q_accept]
+reject_states: []
+
+# Strateji:
+#   Faz 1 (q_a)  : tape1'deki her 'a' için tape2'ye '1' yaz, ikisini de sağa kaydır.
+#   Faz 2 (q_b)  : tape1'deki her 'b' için tape3'e '1' yaz, ikisini de sağa kaydır.
+#   Faz 3        : tape2 ve tape3 başlarına geri sar (LSB konumuna).
+#   Faz 4 (q_c)  : tape1 'c' iken tape2 ve tape3'te '1' bulundukça birlikte sağa yürü.
+#   Bütün şeritler aynı anda blank okuyunca kabul; aksi halde no_transition -> reject.
+
+transitions:
+  - {state: q_start, read: [a, B, B], next: q_a,      write: [a, B, B], move: [S, S, S]}
+  - {state: q_start, read: [B, B, B], next: q_accept, write: [B, B, B], move: [S, S, S]}
+
+  # Faz 1: a'ları say
+  - {state: q_a, read: [a, B, B], next: q_a, write: [a, "1", B], move: [R, R, S]}
+  - {state: q_a, read: [b, B, B], next: q_b, write: [b, B, B],   move: [S, S, S]}
+
+  # Faz 2: b'leri say
+  - {state: q_b, read: [b, B, B], next: q_b,            write: [b, B, "1"], move: [R, S, R]}
+  - {state: q_b, read: [c, B, B], next: q_to_t2_start,  write: [c, B, B],   move: [S, S, S]}
+
+  # Faz 3a: tape2'yi başa sar (sonradan ilk R ile pozisyon 0'a oturur)
+  - {state: q_to_t2_start, read: [c, B, B], next: q_to_t2_back, write: [c, B, B], move: [S, L, S]}
+  - {state: q_to_t2_back,  read: [c, "1", B], next: q_to_t2_back,  write: [c, "1", B], move: [S, L, S]}
+  - {state: q_to_t2_back,  read: [c, B, B],   next: q_to_t3_start, write: [c, B, B],   move: [S, R, S]}
+
+  # Faz 3b: tape3'ü başa sar
+  - {state: q_to_t3_start, read: [c, "1", B], next: q_to_t3_back, write: [c, "1", B], move: [S, S, L]}
+  - {state: q_to_t3_back,  read: [c, "1", "1"], next: q_to_t3_back, write: [c, "1", "1"], move: [S, S, L]}
+  - {state: q_to_t3_back,  read: [c, "1", B],   next: q_c,          write: [c, "1", B],   move: [S, S, R]}
+
+  # Faz 4: c'leri tape2 ve tape3'teki '1'lerle eşleştir
+  - {state: q_c, read: [c, "1", "1"], next: q_c,      write: [c, "1", "1"], move: [R, R, R]}
+  - {state: q_c, read: [B, B, B],     next: q_accept, write: [B, B, B],     move: [S, S, S]}
