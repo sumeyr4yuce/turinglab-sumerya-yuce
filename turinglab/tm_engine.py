@@ -127,10 +127,37 @@ class SingleTapeTM:
         for s in self.accept_states:
             if s not in self.states:
                 raise ValueError(f"Kabul durumu '{s}' durumlar kümesinde yok!")
+        for s in self.reject_states:
+            if s not in self.states:
+                raise ValueError(f"Ret durumu '{s}' durumlar kümesinde yok!")
         if self.blank not in self.tape_alphabet:
             raise ValueError(f"Blank sembolü '{self.blank}' alfabede yok!")
         if self.start_state not in self.states:
             raise ValueError(f"Başlangıç durumu '{self.start_state}' geçersiz!")
+        # input_alphabet, tape_alphabet'in alt kümesi olmalı
+        for sym in self.input_alphabet:
+            if sym not in self.tape_alphabet:
+                raise ValueError(
+                    f"Girdi alfabesindeki '{sym}' sembolü şerit alfabesinde yok!"
+                )
+        # Geçişlerdeki state ve sembollerin tanımlı olduğunu doğrula
+        for (state, read), rule in self.transitions.items():
+            if state not in self.states:
+                raise ValueError(
+                    f"Geçiş kuralındaki kaynak durum '{state}' tanımlı değil!"
+                )
+            if rule.next_state not in self.states:
+                raise ValueError(
+                    f"Geçiş kuralındaki hedef durum '{rule.next_state}' tanımlı değil!"
+                )
+            if read not in self.tape_alphabet:
+                raise ValueError(
+                    f"Geçiş kuralındaki okunan sembol '{read}' şerit alfabesinde yok!"
+                )
+            if rule.write not in self.tape_alphabet:
+                raise ValueError(
+                    f"Geçiş kuralındaki yazılan sembol '{rule.write}' şerit alfabesinde yok!"
+                )
 
     @classmethod
     def from_yaml(cls, path: str | Path) -> "SingleTapeTM":
