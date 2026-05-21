@@ -1,0 +1,31 @@
+name: "anbn_2tape"
+description: "L = {a^n b^n} dilini 2 şeritli TM ile tanır. O(n)."
+
+num_tapes: 2
+states:
+  - q_a
+  - q_b
+  - q_accept
+
+input_alphabet: ["a", "b"]
+tape_alphabet: ["a", "b", "1", "B"]
+blank: "B"
+start_state: q_a
+accept_states: [q_accept]
+reject_states: []
+
+# Strateji:
+#   Faz 1 (q_a): tape1 'a' iken tape2'ye '1' yaz, ikisini de R hareketle ilerlet.
+#   İlk 'b' görüldüğünde tape2'yi bir L kaydır (son '1'in üstüne) ve q_b'ye geç.
+#   Faz 2 (q_b): tape1'deki her b için tape2'deki '1'i L yönünde tüket.
+#   Her iki şerit aynı anda B okuyunca kabul.
+
+transitions:
+  # Faz 1
+  - {state: q_a, read: [a, B], next: q_a,      write: [a, "1"], move: [R, R]}
+  - {state: q_a, read: [b, B], next: q_b,      write: [b, B],   move: [S, L]}
+  - {state: q_a, read: [B, B], next: q_accept, write: [B, B],   move: [S, S]}
+
+  # Faz 2
+  - {state: q_b, read: [b, "1"], next: q_b,      write: [b, "1"], move: [R, L]}
+  - {state: q_b, read: [B, B],   next: q_accept, write: [B, B],   move: [S, S]}
