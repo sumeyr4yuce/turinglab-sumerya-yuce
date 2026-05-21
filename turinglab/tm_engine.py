@@ -191,19 +191,32 @@ class SingleTapeTM:
 
         #Başlangıç halini kaydet
         history.append(Configuration(state, tape.to_string(head), head))
-        if verbose:
-            print(f"Adım 0 | Durum: {state} | Şerit: {tape.to_string_with_head(head)}")
 
         while steps < max_steps:
             if state in self.accept_states:
+                if verbose:
+                    print(
+                        f"Adım {steps} | Durum: {state} | "
+                        f"Şerit: {tape.to_string_with_head(head)}"
+                    )
                 break
             if state in self.reject_states:
+                if verbose:
+                    print(
+                        f"Adım {steps} | Durum: {state} | "
+                        f"Şerit: {tape.to_string_with_head(head)}"
+                    )
                 break
 
             symbol = tape.read(head)
             rule = self.transitions.get((state, symbol))
 
             if not rule:
+                if verbose:
+                    print(
+                        f"Adım {steps} | Durum: {state} | "
+                        f"Şerit: {tape.to_string_with_head(head)}"
+                    )
                 return RunResult(
                     False,
                     "no_transition",
@@ -212,17 +225,19 @@ class SingleTapeTM:
                     history,
                 )
 
+            # El kitabı: Adım N | Durum | Şerit | Hareket — Hareket "uygulanacak" yöndür.
+            if verbose:
+                print(
+                    f"Adım {steps} | Durum: {state} | "
+                    f"Şerit: {tape.to_string_with_head(head)} | Hareket: {rule.move}"
+                )
+
             tape.write(head, rule.write)
             state = rule.next_state
             head += 1 if rule.move == "R" else -1
             steps += 1
 
             history.append(Configuration(state, tape.to_string(head), head))
-            if verbose:
-                print(
-                    f"Adım {steps} | Durum: {state} | "
-                    f"Şerit: {tape.to_string_with_head(head)} | Hareket: {rule.move}"
-                )
 
         is_accepted = state in self.accept_states
         reason = (
