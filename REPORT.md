@@ -116,7 +116,19 @@ Bir hafta daha olsaydı sırayla şunları yapardım:
 
 Aslında üçü de motor değişikliği değil, motor üstüne araç eklemek — yani temel yapı bence olması gerektiği yerde duruyor.
 
-## 6. Kaynakça
+## 6. Bonus: Çok Şeritli Motor ve Karşılaştırma
+
+Vakit kalınca iki bonus seçeneğine girdim:
+
+**Bonus A — Multi-tape motor:** `turinglab/multi_tape.py` içinde `MultiTapeTM` sınıfını yazdım. SingleTapeTM ile aynı iskelet, sadece artık her geçiş kuralı k şerit için ayrı `read/write/move` listesi alıyor. `S` (stay) hareketini de ekledim, çünkü çok şeritli TM'lerde tek bir şerit ilerlerken diğerlerini sabit tutmak çok pratik oluyor. YAML formatı tek şeritli ile aynı çatıda, sadece `num_tapes: k` ekleniyor ve read/write/move listeleri uzunluk k oluyor. Tape sınıfını tekrar yazmadım, mevcut olanı her şerit için ayrı bir örnek olarak kullandım. Üzerinde tasarladığım makine: 3 şeritli `a^n b^n c^n` tanıyıcısı (`machines/anbncn.yaml`). Tape 2 a'ları sayıyor, tape 3 b'leri sayıyor, son fazda her c için her iki sayaçtan birer adım tüketiliyor; üç şerit aynı anda blank okuyunca kabul. `tests/test_multi_tape.py` 9 test içeriyor.
+
+**Bonus C — Karşılaştırmalı analiz:** Aynı dili (`L = {a^n b^n}`) hem tek şeritli (`anbn_1tape.yaml`, O(n²)) hem de iki şeritli (`anbn_2tape.yaml`, O(n)) bir TM ile tanıdım. `scripts/compare_anbn.py` her ikisini `n = 1..20` arasında çalıştırıp adım sayılarını topluyor ve matplotlib ile `docs/comparison.png` üretiyor.
+
+Sonuç grafik (`docs/comparison.png`) çok net bir hikaye anlatıyor: tek şeritli versiyon n=20'de 1261 adım atarken, iki şeritli versiyon sadece 42 adım. Tek şeritli sürüm `O(n²)` çünkü her tur bandı baştan sona tarıyor (en soldaki işaretsiz a'yı bul → en soldaki işaretsiz b'yi bul → başa dön → tekrar). İki şeritli sürüm `O(n)` çünkü a'lar tape 1'de okunup tape 2'ye '1' olarak yazılıyor, sonra b'ler tape 1'de okunurken aynı '1'ler tape 2'de tüketiliyor — tek geçişte bitiyor. Yani aynı dili iki farklı modelle çözmek, "Church-Turing tezi makineleri eşit der ama bu eşitlik ucuz değildir" dersini somut adım sayılarıyla gösteriyor. Hesaplama gücü aynı, hesaplama maliyeti büyük farklı.
+
+Bonus B (NTM) ve D (görselleştirici) için vakit kalmadı; bir sonraki versiyonda en mantıklı eklenti UTM için multi-tape motor üstüne bir kodlama/decode katmanı olur.
+
+## 7. Kaynakça
 
 - Dr. Ali Çetinkaya, *TuringLab Öğrenci El Kitabı*, Selçuk Üniversitesi Bilgisayar Mühendisliği Bölümü, 2026 — ödev şartnamesi ve API beklentileri.
 - Michael Sipser, *Introduction to the Theory of Computation*, 3rd ed., Cengage Learning, 2012 — Turing makineleri ve UTM bölümlerine başvurdum.

@@ -58,18 +58,26 @@ turinglab/
 ├── requirements.txt
 ├── turinglab/
 │   ├── __init__.py
-│   └── tm_engine.py    # Bölüm 1: TM motoru
-├── machines/           # Bölüm 2: tasarlanan TM'ler
+│   ├── tm_engine.py    # Bölüm 1: tek şeritli TM motoru
+│   └── multi_tape.py   # Bonus A: çok şeritli motor
+├── machines/           # Bölüm 2 + bonuslar
 │   ├── binary_increment.yaml   # el kitabı örneği
 │   ├── unary_to_binary.yaml
 │   ├── binary_compare.yaml
 │   ├── string_copy.yaml
-│   └── student_choice.yaml
+│   ├── student_choice.yaml
+│   ├── anbncn.yaml     # Bonus A: 3-şeritli a^n b^n c^n
+│   ├── anbn_1tape.yaml # Bonus C: tek şeritli a^n b^n (O(n^2))
+│   └── anbn_2tape.yaml # Bonus C: 2-şeritli a^n b^n (O(n))
 ├── tests/
 │   ├── test_tm_engine.py
-│   └── test_machines.py
+│   ├── test_machines.py
+│   └── test_multi_tape.py
+├── scripts/
+│   └── compare_anbn.py # Bonus C: karşılaştırma + grafik
 └── docs/
-    └── design_notes.md
+    ├── design_notes.md
+    └── comparison.png  # Bonus C grafiği
 ```
 
 ## Tasarım Kararları (Kısa)
@@ -85,7 +93,23 @@ Detaylı tasarım kararları için `REPORT.md` ve `docs/design_notes.md` dosyala
 
 Videoda dört TM'in en az ikisinin verbose modda çalışması, tasarım kararlarının açıklanması ve en zor bug'ın çözümü yer alıyor.
 
+## Bonuslar
+
+İki bonus seçeneği yapıldı:
+
+**Bonus A — Çok şeritli motor (+8):** `turinglab/multi_tape.py` içinde `MultiTapeTM` sınıfı. `machines/anbncn.yaml` 3 şeritli `a^n b^n c^n` tanıyıcısı. Testler `tests/test_multi_tape.py` altında.
+
+**Bonus C — Karşılaştırmalı analiz (+4):** Aynı dili (`a^n b^n`) tek şeritli ve iki şeritli TM ile çözüp adım sayılarını karşılaştırdım. Çalıştırma:
+
+```bash
+python scripts/compare_anbn.py
+```
+
+Çıktı: `docs/comparison.png`. Detaylı yorum REPORT.md'nin Bonus bölümünde.
+
+Bonus B (NTM) ve D (görselleştirici) için vakit yetmedi.
+
 ## Notlar
 
 - Son teslim: 22 Mayıs 2026 Cuma 23:59. Final tag'i bu tarihte oluşturulacak.
-- Bonus bölümlerinden hiçbirini yapmadım, sadece zorunlu Bölüm 1+2+3 üzerinden 100 puan hedefliyorum.
+- Hedef: zorunlu 100 puan + bonus 12 puan = 112 puan.
