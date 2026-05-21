@@ -184,9 +184,14 @@ class SingleTapeTM:
             raise ValueError(f"YAML dosyasında şu zorunlu alanlar eksik: {missing}")
 
         #Geçiş kurallarını (state, read) -> Transition şeklinde sözlüğe çevir.
-        trans_map = {}
+        trans_map: dict[tuple[str, str], Transition] = {}
         for r in data["transitions"]:
             key = (str(r["state"]), str(r["read"]))
+            if key in trans_map:
+                raise ValueError(
+                    f"Deterministik TM için aynı (durum, sembol) için iki "
+                    f"geçiş tanımlı: {key}"
+                )
             trans_map[key] = Transition(
                 str(r["next"]), str(r["write"]), str(r["move"]).upper()
             )
