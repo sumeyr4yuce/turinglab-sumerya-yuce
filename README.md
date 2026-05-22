@@ -47,13 +47,13 @@ Adım 10 | Durum: q_accept | Şerit: B[1]100B
 python -m pytest
 ```
 
-17 test geçiyor (motor için 10, makineler için 7).
+28 test geçiyor (motor için 12, makineler için 7, multi-tape için 9).
 
 ## Repo Yapısı
 
 ```
 turinglab/
-├── README.md           # buradasın
+├── README.md
 ├── REPORT.md           # mini-rapor (Bölüm 3)
 ├── requirements.txt
 ├── turinglab/
@@ -61,7 +61,7 @@ turinglab/
 │   ├── tm_engine.py    # Bölüm 1: tek şeritli TM motoru
 │   └── multi_tape.py   # Bonus A: çok şeritli motor
 ├── machines/           # Bölüm 2 + bonuslar
-│   ├── binary_increment.yaml   # el kitabı örneği
+│   ├── binary_increment.yaml
 │   ├── unary_to_binary.yaml
 │   ├── binary_compare.yaml
 │   ├── string_copy.yaml

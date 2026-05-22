@@ -12,7 +12,8 @@ YAML_DIR = Path(__file__).parent.parent / "machines"
 
 @pytest.fixture
 def binary_increment_tm() -> SingleTapeTM:
-    """Hocanın verdiği binary_increment örneğini testlerde kullanmak için yüklüyoruz."""
+    """Hocanın verdiği binary_increment örneğini testlerde kullanmak
+    için yüklüyoruz."""
     return SingleTapeTM.from_yaml(YAML_DIR / "binary_increment.yaml")
 
 #YAML YÜKLEME TESTLERİ
@@ -48,12 +49,50 @@ def test_run_returns_run_result(binary_increment_tm: SingleTapeTM) -> None:
 
 def test_binary_increment_outputs(binary_increment_tm: SingleTapeTM) -> None:
     """El kitabındaki binary_increment örneğindeki 1011 -> 1100 dönüşümünü deneme."""
-    
-    test_cases = [("0", "1"), ("1", "10"), ("1011", "1100")]
+
+    # Sayfa 8 'Test Kapsamı': her TM için 5+ girdi.
+    test_cases = [
+        ("0", "1"),
+        ("1", "10"),
+        ("10", "11"),
+        ("111", "1000"),
+        ("1011", "1100"),
+    ]
     for inp, expected in test_cases:
         result = binary_increment_tm.run(inp)
         assert result.accepted is True
         assert result.final_tape == expected
+
+
+def test_unary_to_binary_outputs_engine() -> None:
+    """Motoru ikinci bir TM (unary->binary) ile de doğrula (Sayfa 8 kuralı)."""
+    tm = SingleTapeTM.from_yaml(YAML_DIR / "unary_to_binary.yaml")
+    cases = [
+        ("", ""),
+        ("1", "1"),
+        ("11", "10"),
+        ("111", "11"),
+        ("11111", "101"),
+    ]
+    for inp, expected in cases:
+        result = tm.run(inp, max_steps=10000)
+        assert result.accepted is True
+        assert result.final_tape == expected
+
+
+def test_student_choice_outputs_engine() -> None:
+    """Üçüncü TM (4'e bölünebilirlik) ile motorun doğru çalıştığını doğrula."""
+    tm = SingleTapeTM.from_yaml(YAML_DIR / "student_choice.yaml")
+    accepted = ["0", "100", "1000", "1100", "10000"]
+    rejected = ["", "1", "10", "11", "101"]
+    for inp in accepted:
+        result = tm.run(inp)
+        assert result.accepted is True
+        assert result.reason == "accept"
+    for inp in rejected:
+        result = tm.run(inp)
+        assert result.accepted is False
+        assert result.reason == "reject"
 
 #KENAR DURUMLAR VE HATA YÖNETİMİ
 
