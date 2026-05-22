@@ -86,9 +86,15 @@ class Tape:
         return "".join(self.read(i) for i in range(lo, hi + 1))
 
     def to_string_with_head(self, head: int) -> str:
-        """Kafa konumu köşeli parantez içinde gösterilir. Örnek: 10[1]1B"""
-        all_pos = list(self._cells.keys()) + [head]
-        lo, hi = min(all_pos) - 1, max(all_pos) + 1
+        """Kafa konumu köşeli parantez içinde gösterilir. Örnek: 10[1]1B
+
+        Sol kenar yalnızca negatif index varsa blank ile pad'lenir (el
+        kitabındaki '[1]011B' formatı). Sağda her zaman bir blank gösterilir.
+        """
+        cells_min = min(self._cells.keys()) if self._cells else head
+        cells_max = max(self._cells.keys()) if self._cells else head
+        lo = min(0, head, cells_min)
+        hi = max(head, cells_max + 1)
         res = []
         for i in range(lo, hi + 1):
             char = self.read(i)
