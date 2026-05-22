@@ -180,7 +180,6 @@ class SingleTapeTM:
         except yaml.YAMLError as exc:
             raise ValueError(f"YAML ayrıştırma hatası ({path}): {exc}") from exc
 
-        # El kitabındaki zorunlu alanlar tam mı?
         required_keys = [
             "states", "input_alphabet", "tape_alphabet",
             "blank", "start_state", "accept_states", "transitions",
@@ -263,7 +262,7 @@ class SingleTapeTM:
                     history,
                 )
 
-            # El kitabı: Adım N | Durum | Şerit | Hareket — Hareket "uygulanacak" yöndür.
+            #Adım N | Durum | Şerit | Hareket — Hareket "uygulanacak" yöndür.
             if verbose:
                 print(
                     f"Adım {steps} | Durum: {state} | "

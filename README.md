@@ -1,7 +1,9 @@
 # TuringLab
 
+Youtube Demo Video Linki: https://youtu.be/MqC3hutsLWc
+
 **Sümerya Yüce** · Selçuk Üniversitesi · Bilgisayar Mühendisliği
-Hesaplama Kuramı dersinin final ödevi · Mayıs 2026
+Otomata Teorisi ve Biçimsel Diller dersinin final ödevi · Mayıs 2026
 
 Python ile yazılmış, deterministik tek şeritli bir Turing makinesi simülatörü. YAML dosyasıyla bir TM tanımlıyorsun, motor onu adım adım çalıştırıp kabul/ret, son şerit ve geçtiği adımları döndürüyor.
 
@@ -89,7 +91,7 @@ Detaylı tasarım kararları için `REPORT.md` ve `docs/design_notes.md` dosyala
 ## Demo Video
 
 5–8 dakikalık ekran kaydı:
-> YouTube (unlisted): _link buraya gelecek_
+> YouTube (unlisted):(https://youtu.be/MqC3hutsLWc)
 
 Videoda dört TM'in en az ikisinin verbose modda çalışması, tasarım kararlarının açıklanması ve en zor bug'ın çözümü yer alıyor.
 
