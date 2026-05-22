@@ -81,6 +81,10 @@ Listedeki seçeneklerden (a)'yı seçtim. Normalize ikili gösterimde bir sayın
 
 En önemli hata ayıklama noktası `0` ile `10` girdilerini ayırmaktı. Teorik olarak 0 sayısı 4'e bölünür, bu yüzden `0` kabul, `10` ve boş girdi ret. Bunu ayırmak için `q_single0` ayrı bir durum oldu.
 
+### En zor olan TM hangisiydi?
+
+Bu dörtlü içinde en çok TM-2 (binary_compare) yordu. Tek şeritte hem uzunluk eşitleme hem leksikografik karşılaştırma yapmak deterministik geçişleri sürekli çakıştırdı; 16 durum ve dört ayrı işaretleyici sembol (A/C/D/E) kullanmak zorunda kaldım. TM-3 ile TM-4 bir saatte oturdu; TM-1 sayaç yönü kararı sonrası, TM-2 ise tüm fazları ayrı durum ailelerine bölünce çözüldü.
+
 ## 4. Kavramsal Tartışma — UTM Genişletmesi
 
 Soruyu (b) seçtim: bir TM'in dilini başka bir TM tarafından tanımak için TuringLab nasıl genişletilebilir?
